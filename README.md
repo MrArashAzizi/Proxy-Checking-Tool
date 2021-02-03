@@ -1,3 +1,4 @@
+![PCT Image](https://repository-images.githubusercontent.com/329356601/4f923a00-661d-11eb-8d56-6f47f7ff6ef0)
 # PCT - ProxyCheckingTool
 🚀 A free tool for testing proxies during Internet Censorship. Supports HTTP/S &amp; SOCKS5.
 # Features
