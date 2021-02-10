@@ -77,17 +77,42 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="12dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="2dp"
+            android:src="@drawable/ic_baseline_info_24" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:textSize="13sp"
+            android:padding="1dp"
+            android:text="@string/SecurityWarn"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/MainColor"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="8dp">
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="0.65"
             android:layout_height="match_parent"
             app:boxStrokeColor="@color/black"
             app:hintTextColor="@color/black"
+            android:layout_marginRight="6dp"
             app:startIconDrawable="@drawable/ic_server">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -102,9 +127,9 @@
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="0.35"
             android:layout_height="match_parent"
-            android:layout_marginTop="4dp"
             android:orientation="vertical"
             app:boxStrokeColor="@color/black"
             app:hintTextColor="@color/black"
@@ -172,7 +197,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="Optional" />
+            android:text="Leave blank if not needed." />
 
     </LinearLayout>
 
@@ -201,31 +226,5 @@
                 android:inputType="none" />
 
         </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/btnStart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="16dp"
-        android:background="@color/MainColor"
-        android:foreground="?attr/selectableItemBackground"
-        android:orientation="vertical"
-        android:padding="8dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="START THE TEST"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textColor="@color/TextColor"
-            android:textSize="18dp"
-            android:textStyle="bold" />
-
     </LinearLayout>
 </LinearLayout>

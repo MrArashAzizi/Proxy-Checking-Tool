@@ -20,27 +20,29 @@
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|noScroll"
             app:popupTheme="@style/Theme.ProxyCheckingTool.PopupOverlay"
-            app:subtitle="Free Proxy Testing Tool"
+            app:subtitle="Proxy Testing Tool"
             app:subtitleTextColor="#D92C2C2C"
             app:title="PCT"
             app:titleTextColor="@color/black" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_margin="18dp"
+        android:alpha="0.95"
+        android:backgroundTint="#1A1C20"
+        android:text="Start The Test"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:borderWidth="0dp"
+        app:icon="@drawable/ic_wifi"
+        app:iconTint="@color/white"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
 
-    <!--    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton-->
-    <!--        android:id="@+id/fab"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_gravity="bottom|left"-->
-    <!--        android:layout_margin="@dimen/fab_margin"-->
-    <!--        android:backgroundTint="@color/MainColor"-->
-    <!--        android:text="Your IP Information"-->
-    <!--        android:padding="16dp"-->
-    <!--        android:textColor="@color/white"-->
-    <!--        android:textSize="16sp"-->
-    <!--        app:icon="@android:drawable/ic_input_add"-->
-    <!--        app:iconTint="@color/white" />-->
+    <include layout="@layout/content_main" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

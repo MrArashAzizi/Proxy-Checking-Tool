@@ -9,4 +9,5 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="SecurityWarn">Keep in mind, using a proxy is insecure and it is possible for the ISP to eavesdrop on the data!</string>
 </resources>

@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -27,7 +26,6 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.IOException;
 import java.net.Authenticator;
 import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
@@ -36,8 +34,6 @@ import java.net.Proxy;
 import Arash.Github.ProxyCheckingTool.Helpers.PreferenceHelper;
 import Arash.Github.ProxyCheckingTool.Helpers.Statics;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 
 public class FirstFragment extends Fragment {
@@ -51,34 +47,18 @@ public class FirstFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_first, container, false);
     }
 
-    TextView ProxyAddress, ProxyPort, ProxyUsername, ProxyPassword;
-    RadioButton RB_Http, RB_Sock; // For Proxy Type
-    LinearLayout button;
-    AutoCompleteTextView TargetDropDown;
+    public static TextView ProxyAddress, ProxyPort, ProxyUsername, ProxyPassword;
+    public static RadioButton RB_Http, RB_Sock; // For Proxy Type
+    public static AutoCompleteTextView TargetDropDown;
 
     void initViews(View view) {
         ProxyAddress = view.findViewById(R.id.txtProxy);
         ProxyPort = view.findViewById(R.id.txtPort);
         ProxyUsername = view.findViewById(R.id.txtUsername);
         ProxyPassword = view.findViewById(R.id.txtPassword);
-        button = view.findViewById(R.id.btnStart);
-
         RB_Http = view.findViewById(R.id.RB_Http);
         RB_Sock = view.findViewById(R.id.RB_Sock);
-
         TargetDropDown = view.findViewById(R.id.TargetDropDown);
-    }
-
-    void CustomSnakeBar(View view, String Message, int BackgroundColor, int TextColor) {
-        Snackbar snackbar;
-        snackbar = Snackbar.make(view, Message, Snackbar.LENGTH_LONG);
-        View snackBarView = snackbar.getView();
-        snackBarView.setBackgroundColor(BackgroundColor);
-        TextView textView = snackBarView.findViewById(com.google.android.material.R.id.snackbar_text);
-        textView.setGravity(Gravity.CENTER_HORIZONTAL);
-        textView.setTextColor(TextColor);
-        textView.setMaxLines(5);
-        snackbar.show();
     }
 
     private void GetTextFromPref() {
@@ -88,7 +68,7 @@ public class FirstFragment extends Fragment {
         ProxyPassword.setText(PreferenceHelper.getInstance().getString(Statics.Password_SharedPreferencesKey, ""));
     }
 
-    private String TargetManager() {
+    public static String TargetManager() {
         String Target = null;
         switch (TargetDropDown.getText().toString()) {
             case "Github":
@@ -105,7 +85,7 @@ public class FirstFragment extends Fragment {
 
     }
 
-    private String KeywordManager() {
+    public static String KeywordManager() {
         String Key = null;
         switch (TargetDropDown.getText().toString()) {
             case "Github":
@@ -121,7 +101,8 @@ public class FirstFragment extends Fragment {
         return Key;
     }
 
-    OkHttpClient client = null;
+    OkHttpClient client;
+    public static View MyView;
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -129,6 +110,7 @@ public class FirstFragment extends Fragment {
 
         initViews(view);
         GetTextFromPref();
+        MyView = view;
 
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
 
@@ -149,113 +131,10 @@ public class FirstFragment extends Fragment {
             if (isChecked) RB_Http.setChecked(false);
         });
 
-        button.setOnClickListener(v -> {
-
-            if (ProxyAddress.length() == 0) {
-                ProxyAddress.setError("Enter the address");
-                return;
-            }
-            if (ProxyPort.length() == 0) {
-                ProxyAddress.setError("Enter the Port");
-                return;
-            }
-
-            ProgressDialog pDialog = new ProgressDialog(context, R.style.AppCompatAlertDialogStyle);
-            pDialog.setCancelable(false);
-            pDialog.show();
-
-            ConnectivityManager CM = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = CM.getActiveNetworkInfo();
-            boolean NetStats = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-
-            if (NetStats) {
-                pDialog.setMessage("Trying to find Keyword (" + KeywordManager() + ") ...");
-                int proxyPort = Integer.parseInt(ProxyPort.getText().toString());
-                String proxyHost = ProxyAddress.getText().toString().trim().toLowerCase();
-                String username = ProxyUsername.getText().toString();
-                String password = ProxyPassword.getText().toString();
-
-                //Log.i("TAG644544", "onResponse: " + pingg("soft98.ir"));
-
-
-                if (ProxyUsername.length() != 0) {
-                    if (ProxyPassword.length() != 0) {
-                        ProxyPassword.setError(null);
-                        Authenticator.setDefault(new Authenticator() {
-                            @Override
-                            protected PasswordAuthentication getPasswordAuthentication() {
-                                if (getRequestingHost().equalsIgnoreCase(proxyHost)) {
-                                    if (proxyPort == getRequestingPort())
-                                        return new PasswordAuthentication(username, password.toCharArray());
-                                }
-                                return null;
-                            }
-                        });
-                    } else {
-                        ProxyPassword.setError("Enter the password!");
-                        pDialog.dismiss();
-                        return;
-                    }
-                }
-                if (RB_Http.isChecked()) {
-                    client = new OkHttpClient.Builder()
-                            .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort)))
-                            .build();
-                }
-                if (RB_Sock.isChecked()) {
-                    client = new OkHttpClient.Builder()
-                            .proxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyHost, proxyPort)))
-                            .build();
-                }
-                String ResponseKeyWord = KeywordManager().toLowerCase();
-                String TargetAddress = TargetManager();
-
-                AndroidNetworking.get(TargetAddress)
-                        .setOkHttpClient(client)
-                        .setPriority(Priority.HIGH)
-                        .build()
-                        .getAsString(new StringRequestListener() {
-                            @Override
-                            public void onResponse(String response) {
-                                if (response.toLowerCase().contains(ResponseKeyWord)) {
-                                    CustomSnakeBar(view, "KeyWord Founded!", Color.GREEN, Color.BLACK);
-                                } else
-                                    CustomSnakeBar(view, "KeyWord NotFound!", Color.GRAY, Color.WHITE);
-                                pDialog.dismiss();
-                            }
-
-                            @Override
-                            public void onError(ANError anError) {
-                                CustomSnakeBar(view, anError.getMessage(), Color.RED, Color.WHITE);
-                                Log.i("AndroidNetworkingError", "Error Detail: " + anError.getErrorDetail());
-                                Log.i("AndroidNetworkingError", "Error Body: " + anError.getErrorBody());
-                                Log.i("AndroidNetworkingError", "Error Code: " + anError.getErrorCode());
-                                Log.i("AndroidNetworkingError", "Error Message: " + anError.getMessage());
-                                pDialog.dismiss();
-                            }
-                        });
-            } else {
-                pDialog.dismiss();
-                CustomSnakeBar(view, "Check Your Internet Connection!", Color.RED, Color.WHITE);
-            }
-        });
-
         //NavHostFragment.findNavController(FirstFragment.this).navigate(R.id.action_FirstFragment_to_SecondFragment);
     }
 
-    String run(String url) throws IOException {
-        Request request = new Request.Builder()
-                .header("Connection", "Close")
-                .url(url)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
-        }
-    }
-
-    public long pingg(String domain) {
+    public long Ping(String domain) {
         long i = 0;
         Runtime runtime = Runtime.getRuntime();
         try {
@@ -274,6 +153,18 @@ public class FirstFragment extends Fragment {
         return i;
     }
 
+
+    void CustomSnakeBar(View view, String Message, int BackgroundColor, int TextColor) {
+        Snackbar snackbar;
+        snackbar = Snackbar.make(view, Message, Snackbar.LENGTH_LONG);
+        View snackBarView = snackbar.getView();
+        snackBarView.setBackgroundColor(BackgroundColor);
+        TextView textView = snackBarView.findViewById(com.google.android.material.R.id.snackbar_text);
+        textView.setGravity(Gravity.CENTER_HORIZONTAL);
+        textView.setTextColor(TextColor);
+        textView.setMaxLines(5);
+        snackbar.show();
+    }
 
     @Override
     public void onDestroy() {
