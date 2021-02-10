@@ -15,4 +15,10 @@
 
       first version Uploaded.
       Do not read the codes! You will be disappointed.
-     
+      
+1.4 - Test | Feb 10, 2021
+
+      Improve Performance.
+      Improve Appearance.
+      Minor improvements in codes.
+      Update Dependencies.
