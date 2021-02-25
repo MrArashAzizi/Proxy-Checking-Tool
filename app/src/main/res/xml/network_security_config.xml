@@ -4,5 +4,6 @@
         <domain includeSubdomains="true">github.com</domain>
         <domain includeSubdomains="true">gitlab.com</domain>
         <domain includeSubdomains="true">wikipedia.org</domain>
+        <domain includeSubdomains="true">pubproxy.com</domain>
     </domain-config>
 </network-security-config>

@@ -9,31 +9,47 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
+
+import java.lang.reflect.Type;
 import java.net.Authenticator;
 import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
+import java.util.ArrayList;
+import java.util.List;
 
 import Arash.Github.ProxyCheckingTool.Helpers.PreferenceHelper;
+import Arash.Github.ProxyCheckingTool.ProxyList.DataAdapter;
+import Arash.Github.ProxyCheckingTool.ProxyList.ItemDataModel;
 import okhttp3.OkHttpClient;
-
 
 
 public class MainActivity extends AppCompatActivity {
@@ -51,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         PreferenceHelper.initialize(getApplicationContext());
 
-        findViewById(R.id.fab).setOnClickListener(v -> {
+        findViewById(R.id.fabGO).setOnClickListener(v -> {
 
             if (FirstFragment.ProxyAddress.length() == 0) {
                 FirstFragment.ProxyAddress.setError("Enter the address");
@@ -143,6 +159,61 @@ public class MainActivity extends AppCompatActivity {
                 CustomSnakeBar(FirstFragment.MyView, "Check Your Internet Connection!", Color.RED, Color.WHITE);
             }
         });
+        findViewById(R.id.fabGoToProxyList).setOnClickListener(v -> {
+            PassListBottomSheet();
+        });
+    }
+
+    public void PassListBottomSheet() {
+
+        try {
+
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.btm_proxylist, null);
+
+            ProgressBar Pb = view.findViewById(R.id.ProxyProgressBar);
+
+            String API_ADDRESS = "http://pubproxy.com/api/proxy?limit=10&format=json";
+            //Data from github : https://github.com/clarketm/proxy-list
+
+            RecyclerView RView = view.findViewById(R.id.RecyclerView);
+            List<ItemDataModel> itemDataModels = new ArrayList<>();
+            DataAdapter dataAdapter = new DataAdapter(view.getContext(), itemDataModels);
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                    API_ADDRESS, null, response -> {
+                if (response == null) {
+                    Toast.makeText(this, "There is nothing to show!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                String jsonOutput = null;
+                try {
+                    jsonOutput = response.get("data").toString();
+                    Pb.setVisibility(View.GONE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Type listType = new TypeToken<List<ItemDataModel>>() {
+                }.getType();
+
+                List<ItemDataModel> MyData = new Gson().fromJson(jsonOutput, listType);
+                itemDataModels.clear();
+                itemDataModels.addAll(MyData);
+
+                dataAdapter.notifyDataSetChanged();
+            }, error -> Log.i("Response", error.toString()));
+
+            request.setShouldCache(false);
+            MyApplication.getInstance().addToRequestQueue(request);
+            RView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+            RView.setItemAnimator(new DefaultItemAnimator());
+            RView.setAdapter(dataAdapter);
+            bottomSheetDialog.setContentView(view);
+            bottomSheetDialog.show();
+
+        } catch (Exception ignored) {
+        }
     }
 
     void CustomSnakeBar(View view, String Message, int BackgroundColor, int TextColor) {

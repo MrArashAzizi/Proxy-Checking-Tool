@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="14dp"
+    android:layout_marginRight="10dp"
+    app:cardCornerRadius="14dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15sp"
+            android:layout_marginTop="15sp"
+            android:layout_marginRight="15sp"
+            android:layout_marginBottom="5dp">
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/ProxyLoc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/opensanse_reg_en"
+                android:padding="2dp"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                tools:text="United Kingdom" />
+
+            <TextView
+                android:id="@+id/ProxyAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/opensanse_reg_en"
+                android:padding="2dp"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                tools:text="South Korea" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/Proxy_Type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15sp"
+            android:layout_marginRight="15sp"
+            android:fontFamily="@font/opensanse_reg_en"
+            android:padding="2dp"
+            android:textColor="#99000000"
+            android:textSize="16sp"
+            tools:text="Proxy Type: Socks5" />
+
+        <TextView
+            android:id="@+id/Proxy_Level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15sp"
+            android:layout_marginRight="15sp"
+            android:fontFamily="@font/opensanse_reg_en"
+            android:padding="2dp"
+            android:textColor="#99000000"
+            android:textSize="16sp"
+            tools:text="Proxy Level: Anonymous" />
+
+        <TextView
+            android:id="@+id/Proxy_LastCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15sp"
+            android:layout_marginRight="15sp"
+            android:layout_marginBottom="15sp"
+            android:fontFamily="@font/opensanse_reg_en"
+            android:padding="2dp"
+            android:textColor="#99000000"
+            android:textSize="16sp"
+            tools:text="Last Check: 2021-02-11 16:55:00" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
