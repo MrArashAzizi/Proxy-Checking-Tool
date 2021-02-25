@@ -10,6 +10,10 @@
      Browser
      OkHTTP
      FastAndroidNetworking
+     
+# API's
+     github.com/clarketm/proxy-list / For Proxy List
+     
 # ChangeLog
 1.3 - Test | Sep 18, 2020
 
@@ -22,3 +26,9 @@
       Improve Appearance.
       Minor improvements in codes.
       Update Dependencies.
+      
+1.5 - Test | Feb 25, 2021
+
+      ProxyList added.
+      Improve Appearance.
+      
