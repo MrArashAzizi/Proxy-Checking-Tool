@@ -32,3 +32,7 @@
       ProxyList added.
       Improve Appearance.
       
+1.5.1 - Test | Feb 26, 2021
+      
+      Minor improvements.
+      Upgrade Coding Level.
