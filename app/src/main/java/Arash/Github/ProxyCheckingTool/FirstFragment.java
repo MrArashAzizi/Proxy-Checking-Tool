@@ -1,14 +1,8 @@
 package Arash.Github.ProxyCheckingTool;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,22 +13,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.StringRequestListener;
-import com.google.android.material.snackbar.Snackbar;
-
-import java.net.Authenticator;
-import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
-import java.net.Proxy;
 
 import Arash.Github.ProxyCheckingTool.Helpers.PreferenceHelper;
 import Arash.Github.ProxyCheckingTool.Helpers.Statics;
-import okhttp3.OkHttpClient;
 
 
 public class FirstFragment extends Fragment {
@@ -102,7 +83,6 @@ public class FirstFragment extends Fragment {
         return Key;
     }
 
-    OkHttpClient client;
     public static View MyView;
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -116,11 +96,9 @@ public class FirstFragment extends Fragment {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
 
         String[] type = new String[]{"Github", "Gitlab", "Wikipedia"};
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(context, R.layout.support_simple_spinner_dropdown_item, type);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.support_simple_spinner_dropdown_item, type);
         TargetDropDown.setAdapter(adapter);
         TargetDropDown.setText(adapter.getItem(0), false);
-
 
         RB_Sock.setChecked(true);
 
@@ -135,37 +113,6 @@ public class FirstFragment extends Fragment {
         //NavHostFragment.findNavController(FirstFragment.this).navigate(R.id.action_FirstFragment_to_SecondFragment);
     }
 
-    public long Ping(String domain) {
-        long i = 0;
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            long a = (System.currentTimeMillis() % 100000);
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 " + domain);
-            ipProcess.waitFor();
-            long b = (System.currentTimeMillis() % 100000);
-            if (b <= a) {
-                i = ((100000 - a) + b);
-            } else {
-                i = (b - a);
-            }
-        } catch (Exception ignored) {
-
-        }
-        return i;
-    }
-
-
-    void CustomSnakeBar(View view, String Message, int BackgroundColor, int TextColor) {
-        Snackbar snackbar;
-        snackbar = Snackbar.make(view, Message, Snackbar.LENGTH_LONG);
-        View snackBarView = snackbar.getView();
-        snackBarView.setBackgroundColor(BackgroundColor);
-        TextView textView = snackBarView.findViewById(com.google.android.material.R.id.snackbar_text);
-        textView.setGravity(Gravity.CENTER_HORIZONTAL);
-        textView.setTextColor(TextColor);
-        textView.setMaxLines(5);
-        snackbar.show();
-    }
 
     @Override
     public void onDestroy() {

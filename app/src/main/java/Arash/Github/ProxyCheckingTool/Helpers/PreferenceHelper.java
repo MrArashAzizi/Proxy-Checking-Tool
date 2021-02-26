@@ -91,6 +91,7 @@ public class PreferenceHelper {
         editor.putBoolean(key, isBoolean);
         editor.apply();
     }
+
     public boolean fromPrev8(Activity activity, String key) {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         return sharedPref.getBoolean(key, false);

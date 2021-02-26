@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -45,6 +44,7 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import Arash.Github.ProxyCheckingTool.Helpers.PreferenceHelper;
 import Arash.Github.ProxyCheckingTool.ProxyList.DataAdapter;
@@ -60,46 +60,45 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(findViewById(R.id.toolbar));
 
         Context context = getApplicationContext();
-
-        PreferenceHelper.initialize(getApplicationContext());
+        PreferenceHelper.initialize(context);
 
         findViewById(R.id.fabGO).setOnClickListener(v -> {
 
-            if (FirstFragment.ProxyAddress.length() == 0) {
-                FirstFragment.ProxyAddress.setError("Enter the address");
+            if (FirstFragment.ProxyAddress.length() < 3) {
+                FirstFragment.ProxyAddress.setError("Enter Valid Proxy Address");
                 return;
             }
+
             if (FirstFragment.ProxyPort.length() == 0) {
                 FirstFragment.ProxyAddress.setError("Enter the Port");
                 return;
             }
 
             ProgressDialog pDialog = new ProgressDialog(this, R.style.AppCompatAlertDialogStyle);
-            pDialog.setCancelable(false);
-            pDialog.show();
 
             long StartTimer = System.currentTimeMillis();
 
-            ConnectivityManager CM = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager CM = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = CM.getActiveNetworkInfo();
             boolean NetStats = activeNetwork != null &&
                     activeNetwork.isConnectedOrConnecting();
 
             if (NetStats) {
+
                 pDialog.setMessage("Trying to find Keyword (" + FirstFragment.KeywordManager() + ") ...");
+                pDialog.setCancelable(false);
+                pDialog.show();
+
                 int proxyPort = Integer.parseInt(FirstFragment.ProxyPort.getText().toString());
                 String proxyHost = FirstFragment.ProxyAddress.getText().toString().trim().toLowerCase();
                 String username = FirstFragment.ProxyUsername.getText().toString();
                 String password = FirstFragment.ProxyPassword.getText().toString();
 
-
                 if (FirstFragment.ProxyUsername.length() != 0) {
                     if (FirstFragment.ProxyPassword.length() != 0) {
-                        FirstFragment.ProxyPassword.setError(null);
                         Authenticator.setDefault(new Authenticator() {
                             @Override
                             protected PasswordAuthentication getPasswordAuthentication() {
@@ -110,33 +109,34 @@ public class MainActivity extends AppCompatActivity {
                                 return null;
                             }
                         });
+
                     } else {
                         FirstFragment.ProxyPassword.setError("Enter the password!");
                         pDialog.dismiss();
                         return;
                     }
                 }
+
                 if (FirstFragment.RB_Http.isChecked()) {
                     client = new OkHttpClient.Builder()
                             .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort)))
                             .build();
                 }
+
                 if (FirstFragment.RB_Sock.isChecked()) {
                     client = new OkHttpClient.Builder()
                             .proxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyHost, proxyPort)))
                             .build();
                 }
-                String ResponseKeyWord = FirstFragment.KeywordManager().toLowerCase();
-                String TargetAddress = FirstFragment.TargetManager();
 
-                AndroidNetworking.get(TargetAddress)
+                AndroidNetworking.get(FirstFragment.TargetManager())
                         .setOkHttpClient(client)
                         .setPriority(Priority.HIGH)
                         .build()
                         .getAsString(new StringRequestListener() {
                             @Override
                             public void onResponse(String response) {
-                                if (response.toLowerCase().contains(ResponseKeyWord)) {
+                                if (response.toLowerCase().contains(FirstFragment.KeywordManager().toLowerCase())) {
                                     long EndTimer = System.currentTimeMillis();
                                     CustomSnakeBar(FirstFragment.MyView, "KeyWord Founded in " + ((EndTimer - StartTimer) + "ms"), Color.GREEN, Color.BLACK);
                                 } else
@@ -159,15 +159,12 @@ public class MainActivity extends AppCompatActivity {
                 CustomSnakeBar(FirstFragment.MyView, "Check Your Internet Connection!", Color.RED, Color.WHITE);
             }
         });
-        findViewById(R.id.fabGoToProxyList).setOnClickListener(v -> {
-            PassListBottomSheet();
-        });
+
+        findViewById(R.id.fabGoToProxyList).setOnClickListener(v -> PassListBottomSheet());
     }
 
     public void PassListBottomSheet() {
-
         try {
-
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate(R.layout.btm_proxylist, null);
@@ -181,12 +178,13 @@ public class MainActivity extends AppCompatActivity {
             List<ItemDataModel> itemDataModels = new ArrayList<>();
             DataAdapter dataAdapter = new DataAdapter(view.getContext(), itemDataModels);
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
-                    API_ADDRESS, null, response -> {
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, API_ADDRESS, null, response -> {
+
                 if (response == null) {
                     Toast.makeText(this, "There is nothing to show!", Toast.LENGTH_LONG).show();
                     return;
                 }
+
                 String jsonOutput = null;
                 try {
                     jsonOutput = response.get("data").toString();
@@ -194,14 +192,14 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
                 Type listType = new TypeToken<List<ItemDataModel>>() {
                 }.getType();
 
-                List<ItemDataModel> MyData = new Gson().fromJson(jsonOutput, listType);
                 itemDataModels.clear();
-                itemDataModels.addAll(MyData);
-
+                itemDataModels.addAll(Objects.requireNonNull(new Gson().fromJson(jsonOutput, listType)));
                 dataAdapter.notifyDataSetChanged();
+
             }, error -> Log.i("Response", error.toString()));
 
             request.setShouldCache(false);
@@ -212,13 +210,13 @@ public class MainActivity extends AppCompatActivity {
             bottomSheetDialog.setContentView(view);
             bottomSheetDialog.show();
 
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
     void CustomSnakeBar(View view, String Message, int BackgroundColor, int TextColor) {
-        Snackbar snackbar;
-        snackbar = Snackbar.make(view, Message, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(view, Message, Snackbar.LENGTH_LONG);
         View snackBarView = snackbar.getView();
         snackBarView.setBackgroundColor(BackgroundColor);
         TextView textView = snackBarView.findViewById(com.google.android.material.R.id.snackbar_text);
@@ -237,9 +235,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement

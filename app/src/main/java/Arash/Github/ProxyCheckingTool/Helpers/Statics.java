@@ -9,6 +9,4 @@ public class Statics {
     public static String Username_SharedPreferencesKey = "UsernameP";
     public static String Password_SharedPreferencesKey = "PasswordP";
 
-
-
 }

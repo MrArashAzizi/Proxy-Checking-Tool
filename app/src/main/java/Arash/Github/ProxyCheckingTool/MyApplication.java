@@ -1,7 +1,7 @@
 package Arash.Github.ProxyCheckingTool;
 
 import android.app.Application;
-import android.text.TextUtils;
+import android.content.Context;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -11,6 +11,8 @@ public class MyApplication extends Application {
 
     private static final String TAG = "MyApplicationTAG";
 
+    private static Context context;
+
     private RequestQueue requestQueue;
     private static Arash.Github.ProxyCheckingTool.MyApplication mInstance;
 
@@ -18,34 +20,27 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        MyApplication.context = getApplicationContext();
     }
 
-    public static synchronized  Arash.Github.ProxyCheckingTool.MyApplication getInstance(){
+    public static synchronized Arash.Github.ProxyCheckingTool.MyApplication getInstance() {
         return mInstance;
     }
 
-    public RequestQueue getRequestQueue(){
-        if(requestQueue == null){
+    public RequestQueue getRequestQueue() {
+        if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(getApplicationContext());
         }
         return requestQueue;
     }
 
-    public <T> void addToRequestQueue(Request<T> req, String tag){
 
-        req.setTag(TextUtils.isEmpty(tag)? TAG: tag);
-        getRequestQueue().add(req);
-
-    }
-
-    public <T> void addToRequestQueue(Request<T> req){
+    public <T> void addToRequestQueue(Request<T> req) {
         req.setTag(TAG);
         getRequestQueue().add(req);
     }
 
-    public <T> void cancelPendingRequest(Object tag){
-        if(requestQueue != null){
-            requestQueue.cancelAll(tag);
-        }
+    public static Context getAppContext() {
+        return MyApplication.context;
     }
 }

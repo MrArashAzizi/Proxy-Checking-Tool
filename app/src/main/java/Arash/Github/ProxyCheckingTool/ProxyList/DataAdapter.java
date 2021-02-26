@@ -5,15 +5,15 @@ import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import Arash.Github.ProxyCheckingTool.MyApplication;
 import Arash.Github.ProxyCheckingTool.R;
 
 public class DataAdapter extends RecyclerView.Adapter<MyViewHolder> {
@@ -35,23 +35,25 @@ public class DataAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        try {
+            ItemDataModel dataModel = IDM_List.get(position);
+            holder.txtProxyPort.setText(dataModel.getIpPort());
+            Locale loc = new Locale("en_", dataModel.getCountry());
+            holder.txtLocation.setText(loc.getDisplayCountry());
+            holder.txtType.setText(String.format("Proxy Type: %s", dataModel.getType().toUpperCase()));
+            holder.txtLevel.setText(String.format("Proxy Level : %s", dataModel.getProxy_level()));
+            holder.txtLastCheck.setText(String.format("Last Check: %s", dataModel.getLast_checked()));
 
-        ItemDataModel dataModel = IDM_List.get(position);
-        holder.txtProxyPort.setText(dataModel.getIpPort());
-        Locale loc = new Locale("en_",dataModel.getCountry());
-        holder.txtLocation.setText(loc.getDisplayCountry());
-        holder.txtType.setText("Proxy Type: " + dataModel.getType().toUpperCase());
-        holder.txtLevel.setText("Proxy Level: " + dataModel.getProxy_level());
-        holder.txtLastCheck.setText("Last Check: " + dataModel.getLast_checked());
+            if (position + 1 == getItemCount()) {
+                // set bottom margin to 72dp.
+                setBottomMargin(holder.itemView, (int) (72 * Resources.getSystem().getDisplayMetrics().density));
+            } else {
+                // reset bottom margin back to zero. (your value may be different)
+                setBottomMargin(holder.itemView, 0);
+            }
 
-        holder.itemView.setAnimation(AnimationUtils.loadAnimation(holder.itemView.getContext(), android.R.anim.fade_in));
-
-        if (position + 1 == getItemCount()) {
-            // set bottom margin to 72dp.
-            setBottomMargin(holder.itemView, (int) (72 * Resources.getSystem().getDisplayMetrics().density));
-        } else {
-            // reset bottom margin back to zero. (your value may be different)
-            setBottomMargin(holder.itemView, 0);
+        } catch (Exception ex) {
+            Toast.makeText(MyApplication.getAppContext(), ex.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -68,8 +70,4 @@ public class DataAdapter extends RecyclerView.Adapter<MyViewHolder> {
         return IDM_List.isEmpty() ? 0 : IDM_List.size();
     }
 
-    public void filteredList(ArrayList<ItemDataModel> filteredList){
-        IDM_List = filteredList;
-        notifyDataSetChanged();
-    }
 }
