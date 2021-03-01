@@ -36,3 +36,8 @@
       
       Minor improvements.
       Upgrade Coding Level.
+      
+1.5.2 - Test | March 1, 2021
+      
+      VPN Alert added.
+
