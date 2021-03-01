@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MainColorDark"
+    android:animateLayoutChanges="true"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,9 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|noScroll"
+            app:layout_scrollFlags="scroll"
             app:popupTheme="@style/Theme.ProxyCheckingTool.PopupOverlay"
-            app:subtitle="Proxy Testing Tool"
+            app:subtitle="Proxy Checking Tool"
             app:subtitleTextColor="#D92C2C2C"
             app:title="PCT"
             app:titleTextColor="@color/black" />

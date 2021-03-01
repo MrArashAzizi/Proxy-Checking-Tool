@@ -29,6 +29,7 @@ public class FirstFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_first, container, false);
     }
 
+
     public static TextView ProxyAddress, ProxyPort, ProxyUsername, ProxyPassword;
     public static RadioButton RB_Http, RB_Sock; // For Proxy Type
     public static AutoCompleteTextView TargetDropDown;
@@ -89,9 +90,15 @@ public class FirstFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context context = view.getContext();
 
+
         initViews(view);
         GetTextFromPref();
         MyView = view;
+
+        TextView vpnAlert = view.findViewById(R.id.vpnAlertTV);
+        if (!MyApplication.CheckForVPN()) vpnAlert.setVisibility(View.GONE);
+        vpnAlert.setOnClickListener(v -> vpnAlert.setVisibility(View.GONE));
+
 
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
 

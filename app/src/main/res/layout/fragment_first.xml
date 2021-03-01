@@ -5,8 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MainColorDark"
+    android:animateLayoutChanges="true"
     android:orientation="vertical"
     tools:context=".FirstFragment">
+
+    <TextView
+        android:id="@+id/vpnAlertTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_red_dark"
+        android:layout_gravity="top|center_horizontal"
+        android:gravity="center"
+        android:padding="4dp"
+        android:text="Turn off your VPN to ensure the test result!"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
 
 
     <LinearLayout

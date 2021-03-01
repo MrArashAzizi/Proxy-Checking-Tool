@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         PreferenceHelper.initialize(context);
 
+
         findViewById(R.id.fabGO).setOnClickListener(v -> {
 
             if (FirstFragment.ProxyAddress.length() < 3) {
